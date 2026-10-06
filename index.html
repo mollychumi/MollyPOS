@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>💅 茉莉來算算</title>
+    <style>
+        :root {
+            --bg-color: #FAF5F5;
+            --card-bg: #FFFFFF;
+            --primary-pink: #E8A5A5;
+            --accent-rose: #C87575;
+            --text-dark: #4A3E3E;
+            --text-muted: #8C7A7A;
+            --border-color: #F0E2E2;
+            --shadow: 0 8px 20px rgba(200, 117, 117, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-bottom: 90px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-rose);
+            letter-spacing: 1px;
+        }
+
+        /* 置頂總金額卡片 */
+        .total-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F5 100%);
+            border: 2px solid var(--primary-pink);
+            border-radius: 20px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 10;
+        }
+
+        .total-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .total-amount {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--accent-rose);
+        }
+
+        .category-block {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent-rose);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .btn-item:active {
+            transform: scale(0.96);
+            background: #FFF0F0;
+            border-color: var(--primary-pink);
+        }
+
+        .btn-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-price {
+            font-size: 0.8rem;
+            color: var(--accent-rose);
+        }
+
+        /* 輸入框通用樣式 (延甲 / 特殊保養) */
+        .extension-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .extension-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ext-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .ext-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .ext-controls input {
+            width: 75px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .ext-controls input:focus {
+            border-color: var(--primary-pink);
+        }
+
+        /* 特殊彈性加價（名稱 + 金額 + 數量） */
+        .custom-input-box {
+            display: flex;
+            gap: 6px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .custom-input-box input {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 6px;
+            font-size: 0.82rem;
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        .custom-input-box input[type="text"] { flex: 1.5; min-width: 0; }
+        .custom-input-box input[type="number"] { flex: 1; min-width: 0; text-align: center; }
+
+        .btn-ext-add {
+            background: var(--accent-rose);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-ext-add:active {
+            opacity: 0.85;
+        }
+
+        /* 結帳明細區 */
+        .cart-section {
+            margin-top: 24px;
+        }
+
+        .cart-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            padding: 16px 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .cart-info .sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .cart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: #FFF;
+            font-size: 1rem;
+            color: var(--accent-rose);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .qty-number {
+            font-weight: 600;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            z-index: 20;
+        }
+
+        .btn-reset {
+            width: 100%;
+            max-width: 500px;
+            background: #FFF0F0;
+            color: var(--accent-rose);
+            border: 1px solid var(--primary-pink);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-reset:active {
+            background: #FFE0E0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>茉莉來算算</h1>
+    </header>
+
+    <!-- 總金額顯示 -->
+    <div class="total-card">
+        <div class="total-label">本次應收總金額</div>
+        <div class="total-amount" id="grandTotal">NT$ 0</div>
+    </div>
+
+    <!-- 5 大分類區塊 -->
+    <div id="categoryContainer"></div>
+
+    <!-- 點選明細 -->
+    <div class="cart-section">
+        <div class="category-title">🧾 點選明細</div>
+        <div class="cart-card" id="cartContainer">
+            <div class="cart-empty">尚未選取任何項目</div>
+        </div>
+    </div>
+
+    <!-- 一鍵清空按鈕 -->
+    <div class="bottom-bar">
+        <button class="btn-reset" id="resetBtn">🗑️️ 一鍵清空算盤（迎接下一位）</button>
+    </div>
+
+    <script>
+        const categoriesData = [
+            {
+                title: "💅 凝膠指甲",
+                items: [
+                    { name: "晶透建甲凝膠", price: 1200 },
+                    { name: "單色凝膠", price: 1200 },
+                    { name: "單色貓眼", price: 1600 },
+                    { name: "雙色貓眼", price: 1700 },
+                    { name: "單色漸層", price: 1500 },
+                    { name: "雙色漸層", price: 1700 },
+                    { name: "璀璨漸層", price: 1400 },
+                    { name: "優雅法式", price: 1650 },
+                    { name: "特殊甲凝膠", price: 1500 },
+                ]
+            },
+            {
+                title: "✂️ 卸甲護理",
+                items: [
+                    { name: "本店卸甲續作", price: 300 },
+                    { name: "他店卸甲續作", price: 500 },
+                    { name: "本店卸延長續作", price: 500 },
+                    { name: "他店卸延長續作", price: 700 },
+                    { name: "本店單純卸本甲", price: 700 },
+                    { name: "他店單純卸本甲", price: 800 },
+                    { name: "本店單純卸延長", price: 900 },
+                    { name: "他店卸延長延長", price: 1000 },
+                ]
+            },
+            {
+                title: "✨ 加價項目",
+                hasExtension: true, // 底部放延甲區塊
+                items: [
+                    { name: "延甲二次利用 (指)", price: 30 },
+                    { name: "裸透感遮游離", price: 150 },
+                    { name: "貓眼 (指)", price: 40 },
+                    { name: "跳色 (色)", price: 100 },
+                    { name: "鏡面粉 (指)", price: 80 },
+                ]
+            },
+            {
+                title: "✏️ 特殊彈性加價",
+                isCustomBox: true, // 名稱 * 金額 * 數量
+                items: []
+            },
+            {
+                title: "🧴 手足保養",
+                hasCareInputs: true, // 底部放嵌甲護理/足底柔嫩自填金額區塊
+                items: [
+                    { name: "手部兩側硬皮", price: 150 },
+                    { name: "足部兩側硬皮", price: 200 },
+                    { name: "手部水晶保養", price: 500 },
+                    { name: "足部水晶保養", price: 700 },
+                    { name: "手部白金保養", price: 800 },
+                    { name: "足部白金保養", price: 1000 },
+                    { name: "手部黃薔薇保養", price: 1400 },
+                    { name: "足部黃薔薇保養", price: 1600 },
+                    { name: "手部黑薔薇保養", price: 1750 },
+                    { name: "足部黑薔薇保養", price: 1950 },
+                ]
+            }
+        ];
+
+        let cart = [];
+
+        function initCategoryButtons() {
+            const container = document.getElementById('categoryContainer');
+            if (!container) return;
+
+            container.innerHTML = categoriesData.map((cat, catIdx) => {
+                // 1. 特殊彈性加價區塊
+                if (cat.isCustomBox) {
+                    return `
+                        <div class="category-block">
+                            <div class="category-title">${cat.title}</div>
+                            <div class="custom-input-box">
+                                <input type="text" id="customName" placeholder="項目名稱" value="特殊加價">
+                                <input type="number" id="customPrice" placeholder="單價 $" inputmode="numeric">
+                                <input type="number" id="customQty" placeholder="數量" value="1" min="1" inputmode="numeric">
+                                <button type="button" class="btn-ext-add" id="addCustomBtn">＋ 加入</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 2. 一般區塊（包含延甲與特殊保養延伸區）
+                return `
+                    <div class="category-block">
+                        <div class="category-title">${cat.title}</div>
+                        <div class="grid-buttons">
+                            ${cat.items.map((item, itemIdx) => `
+                                <div class="btn-item" data-cat="${catIdx}" data-item="${itemIdx}">
+                                    <span class="btn-name">${item.name}</span>                                     <span class="btn-price">$${item.price}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${cat.hasExtension ? `
+                            <div class="extension-box">
+                                <div class="extension-item">
+                                    <span class="ext-title">💅 手部延甲 ($150/指)</span>
+                                    <div class="ext-controls">
+                                        <input type="number" id="extHandQty" placeholder="指數" min="1" inputmode="numeric">
+                                        <button type="button" class="btn-ext-add" onclick="addExtension('手部延甲', 150, 'extHandQty')">＋ 加入</button>
+                                    </div>
+                                </div>
+                                <div class="extension-item">
+                                    <span class="ext-title">🦶 足部延甲 ($200/指)</span>
+                                    <div class="ext-controls">
+                                        <input type="number" id="extFootQty" placeholder="指數" min="1" inputmode="numeric">
+                                        <button type="button" class="btn-ext-add" onclick="addExtension('足部延甲', 200, 'extFootQty')">＋ 加入</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${cat.hasCareInputs ? `
+                            <div class="extension-box">
+                                <div class="extension-item">
+                                    <span class="ext-title">🩹 嵌甲護理</span>
+                                    <div class="ext-controls">
+                                        <input type="number" id="careIngrownPrice" placeholder="金額 $" inputmode="numeric">
+                                        <button type="button" class="btn-ext-add" onclick="addCustomCare('嵌甲護理', 'careIngrownPrice')">＋ 加入</button>
+                                    </div>
+                                </div>
+                                <div class="extension-item">
+                                    <span class="ext-title">🦶 足底柔嫩</span>
+                                    <div class="ext-controls">
+                                        <input type="number" id="careSolePrice" placeholder="金額 $" inputmode="numeric">
+                                        <button type="button" class="btn-ext-add" onclick="addCustomCare('足底柔嫩', 'careSolePrice')">＋ 加入</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // 綁定一般按鈕事件
+            container.querySelectorAll('.btn-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cIdx = btn.getAttribute('data-cat');
+                    const iIdx = btn.getAttribute('data-item');
+                    const item = categoriesData[cIdx].items[iIdx];
+                    addItem(item.name, item.price, 1);
+                });
+            });
+
+            // 綁定特殊彈性加價按鈕
+            const addCustomBtn = document.getElementById('addCustomBtn');
+            if (addCustomBtn) {
+                addCustomBtn.addEventListener('click', addCustomItem);
+            }
+        }
+
+        // 通用加購邏輯
+        function addItem(name, price, qty = 1) {
+            const existing = cart.find(i => i.name === name);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({ name, price, qty });
+            }
+            render();
+        }
+
+        // 延甲邏輯（單價固定，自訂指數）
+        function addExtension(name, price, inputId) {
+            const input = document.getElementById(inputId);
+            const qty = parseInt(input.value, 10);
+            if (isNaN(qty) || qty <= 0) {
+                alert("請輸入正確的指數！");
+                return;
+            }
+            addItem(name, price, qty);
+            input.value = '';
+        }
+
+        // 嵌甲護理 / 足底柔嫩邏輯（名稱固定，自訂金額）
+        function addCustomCare(name, inputId) {
+            const input = document.getElementById(inputId);
+            const price = parseFloat(input.value);
+            if (isNaN(price) || price <= 0) {
+                alert("請輸入有效的金額！");
+                return;
+            }
+            addItem(name, price, 1);
+            input.value = '';
+        }
+
+        // 特殊彈性加價邏輯（自訂名稱 * 金額 * 數量）
+        function addCustomItem() {
+            const nameInput = document.getElementById('customName');
+            const priceInput = document.getElementById('customPrice');
+            const qtyInput = document.getElementById('customQty');
+
+            const name = nameInput.value.trim() || "特殊加價";
+            const price = parseFloat(priceInput.value);
+            const qty = parseInt(qtyInput.value, 10) || 1;
+
+            if (isNaN(price) || price <= 0) {
+                alert("請輸入有效的單價金額！");
+                return;
+            }
+
+            if (isNaN(qty) || qty <= 0) {
+                alert("請輸入有效的數量！");
+                return;
+            }
+
+            addItem(name, price, qty);
+
+            priceInput.value = '';
+            qtyInput.value = '1';
+            nameInput.value = '特殊加價';
+        }
+        function changeQty(name, delta) {
+            const item = cart.find(i => i.name === name);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.name !== name);
+                }
+            }
+            render();
+        }
+
+        function clearCart() {
+            cart = [];
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('cartContainer');
+            const totalEl = document.getElementById('grandTotal');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="cart-empty">尚未選取任何項目</div>`;
+                totalEl.innerText = "NT$ 0";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                return `
+                    <div class="cart-item">
+                        <div class="cart-info">
+                            <div class="name">${item.name}</div>
+                            <div class="sub">$${item.price} × ${item.qty} = $${subtotal}</div>
+                        </div>
+                        <div class="cart-controls">
+                            <button class="qty-btn btn-minus" data-name="${item.name}">-</button>
+                            <span class="qty-number">${item.qty}</span>
+                            <button class="qty-btn btn-plus" data-name="${item.name}">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('.btn-minus').forEach(btn => {
+                btn.addEventListener('click', () => changeQty(btn.getAttribute('data-name'), -1));
+            });
+            container.querySelectorAll('.btn-plus').forEach(btn => {
+                btn.addEventListener('click', () => changeQty(btn.getAttribute('data-name'), 1));
+            });
+
+            totalEl.innerText = `NT$ ${total.toLocaleString()}`;
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', clearCart);
+
+        initCategoryButtons();
+    </script>
+</body>
+</html>
