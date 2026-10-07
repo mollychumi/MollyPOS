@@ -213,6 +213,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+	    text-align: center;
         }
 
         .ext-controls {
@@ -413,7 +414,6 @@
         </div>
         <button class="btn-reset" id="resetBtn">
             <span>📋 複製明細</span>
-            <span>並清空算盤</span>
         </button>
     </div>
 
@@ -440,7 +440,8 @@
                     { name: "單色漸層", price: 1500 },
                     { name: "雙色漸層", price: 1700 },
                     { name: "璀璨漸層", price: 1400 },
-                    { name: "優雅法式", price: 1650 },
+                    { name: "優雅法式", price: 1650 }
+
                 ]
             },
             {
@@ -468,8 +469,12 @@
                     { name: "裸透感遮游離", price: 150 },
                     { name: "貓眼 (指)", price: 40 },
                     { name: "跳色 (色)", price: 100 },
-                    { name: "鏡面粉 (指)", price: 80 }
-                    { name: "特殊甲加價", price: 300 }
+                    { name: "鏡面粉 (指)", price: 80 },
+                    { name: "特殊甲加價", price: 300 },
+                    { name: "A級暈染", price: 80 },
+                    { name: "B級暈染", price: 120 },
+                    { name: "C級暈染", price: 150 },
+                    { name: "D級暈染", price: 180 }
                 ]
             },
             {
@@ -701,9 +706,9 @@
                     document.execCommand('copy');
                     document.body.removeChild(textarea);
                 }
-                alert("✅ 明細已複製至剪貼簿，算盤已歸零清空！");
+                alert("✅ 明細已複製至剪貼簿，已歸零清空！");
             } catch (err) {
-                alert("⚠️ 明細複製完成，算盤已歸零！");
+                alert("⚠️ 明細複製完成，已歸零！");
             }
 
             cart = [];
