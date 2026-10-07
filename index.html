@@ -45,7 +45,7 @@
             letter-spacing: 1px;
         }
 
-        /* 置頂總金額卡片 */
+        /* 置頂總金額顯示 */
         .total-card {
             background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F5 100%);
             border: 2px solid var(--primary-pink);
@@ -103,25 +103,42 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .btn-item:active {
             transform: scale(0.96);
-            background: #FFF0F0;
-            border-color: var(--primary-pink);
+        }
+
+        /* ✨ 已點選/加入結帳之按鈕高亮樣式 */
+        .btn-item.active {
+            background: #F7E2E2;
+            border: 1.5px solid var(--accent-rose);
+            box-shadow: 0 3px 10px rgba(200, 117, 117, 0.2);
+        }
+
+        .btn-item.active .btn-name {
+            color: var(--accent-rose);
+            font-weight: 700;
+        }
+
+        .btn-item.active .btn-price {
+            color: var(--accent-rose);
+            font-weight: 700;
         }
 
         .btn-name {
             font-size: 0.9rem;
             font-weight: 600;
             text-align: center;
+            transition: color 0.2s ease;
         }
 
         .btn-price {
             font-size: 0.8rem;
             color: var(--accent-rose);
+            transition: color 0.2s ease;
         }
 
         /* 輸入框通用樣式 (延甲 / 特殊保養) */
@@ -314,7 +331,7 @@
 <body>
 
     <header>
-        <h1>茉莉來算算</h1>
+        <h1>💅 茉莉來算算</h1>
     </header>
 
     <!-- 總金額顯示 -->
@@ -334,9 +351,9 @@
         </div>
     </div>
 
-    <!-- 一鍵清空按鈕 -->
+    <!-- 一鍵複製並清空按鈕 -->
     <div class="bottom-bar">
-        <button class="btn-reset" id="resetBtn">🗑️️ 一鍵清空算盤（迎接下一位）</button>
+        <button class="btn-reset" id="resetBtn">📋 複製明細並清空算盤</button>
     </div>
 
     <script>
@@ -352,7 +369,7 @@
                     { name: "雙色漸層", price: 1700 },
                     { name: "璀璨漸層", price: 1400 },
                     { name: "優雅法式", price: 1650 },
-                    { name: "特殊甲凝膠", price: 1500 },
+                    { name: "特殊甲凝膠", price: 1500 }
                 ]
             },
             {
@@ -365,28 +382,28 @@
                     { name: "本店單純卸本甲", price: 700 },
                     { name: "他店單純卸本甲", price: 800 },
                     { name: "本店單純卸延長", price: 900 },
-                    { name: "他店卸延長延長", price: 1000 },
+                    { name: "他店卸延長延長", price: 1000 }
                 ]
             },
             {
                 title: "✨ 加價項目",
-                hasExtension: true, // 底部放延甲區塊
+                hasExtension: true,
                 items: [
                     { name: "延甲二次利用 (指)", price: 30 },
                     { name: "裸透感遮游離", price: 150 },
                     { name: "貓眼 (指)", price: 40 },
                     { name: "跳色 (色)", price: 100 },
-                    { name: "鏡面粉 (指)", price: 80 },
+                    { name: "鏡面粉 (指)", price: 80 }
                 ]
             },
             {
                 title: "✏️ 特殊彈性加價",
-                isCustomBox: true, // 名稱 * 金額 * 數量
+                isCustomBox: true,
                 items: []
             },
             {
                 title: "🧴 手足保養",
-                hasCareInputs: true, // 底部放嵌甲護理/足底柔嫩自填金額區塊
+                hasCareInputs: true,
                 items: [
                     { name: "手部兩側硬皮", price: 150 },
                     { name: "足部兩側硬皮", price: 200 },
@@ -397,7 +414,7 @@
                     { name: "手部黃薔薇保養", price: 1400 },
                     { name: "足部黃薔薇保養", price: 1600 },
                     { name: "手部黑薔薇保養", price: 1750 },
-                    { name: "足部黑薔薇保養", price: 1950 },
+                    { name: "足部黑薔薇保養", price: 1950 }
                 ]
             }
         ];
@@ -409,7 +426,6 @@
             if (!container) return;
 
             container.innerHTML = categoriesData.map((cat, catIdx) => {
-                // 1. 特殊彈性加價區塊
                 if (cat.isCustomBox) {
                     return `
                         <div class="category-block">
@@ -424,7 +440,6 @@
                     `;
                 }
 
-                // 2. 一般區塊（包含延甲與特殊保養延伸區）
                 return `
                     <div class="category-block">
                         <div class="category-title">${cat.title}</div>
@@ -477,7 +492,6 @@
                 `;
             }).join('');
 
-            // 綁定一般按鈕事件
             container.querySelectorAll('.btn-item').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const cIdx = btn.getAttribute('data-cat');
@@ -487,14 +501,12 @@
                 });
             });
 
-            // 綁定特殊彈性加價按鈕
             const addCustomBtn = document.getElementById('addCustomBtn');
             if (addCustomBtn) {
                 addCustomBtn.addEventListener('click', addCustomItem);
             }
         }
 
-        // 通用加購邏輯
         function addItem(name, price, qty = 1) {
             const existing = cart.find(i => i.name === name);
             if (existing) {
@@ -505,7 +517,6 @@
             render();
         }
 
-        // 延甲邏輯（單價固定，自訂指數）
         function addExtension(name, price, inputId) {
             const input = document.getElementById(inputId);
             const qty = parseInt(input.value, 10);
@@ -517,7 +528,6 @@
             input.value = '';
         }
 
-        // 嵌甲護理 / 足底柔嫩邏輯（名稱固定，自訂金額）
         function addCustomCare(name, inputId) {
             const input = document.getElementById(inputId);
             const price = parseFloat(input.value);
@@ -529,7 +539,6 @@
             input.value = '';
         }
 
-        // 特殊彈性加價邏輯（自訂名稱 * 金額 * 數量）
         function addCustomItem() {
             const nameInput = document.getElementById('customName');
             const priceInput = document.getElementById('customPrice');
@@ -555,6 +564,7 @@
             qtyInput.value = '1';
             nameInput.value = '特殊加價';
         }
+
         function changeQty(name, delta) {
             const item = cart.find(i => i.name === name);
             if (item) {
@@ -566,7 +576,40 @@
             render();
         }
 
-        function clearCart() {
+        async function copyAndClearCart() {
+            if (cart.length === 0) {
+                alert("目前算盤內沒有任何項目喔！");
+                return;
+            }
+
+            let textLines = [];
+            let total = 0;
+
+            cart.forEach(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                textLines.push(`${item.name}\n$${item.price} × ${item.qty} = $${subtotal}`);
+            });
+
+            textLines.push(`\n💰 總金額：NT$ ${total.toLocaleString()}`);
+            const finalText = textLines.join('\n');
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(finalText);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = finalText;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+                alert("✅ 明細已複製至剪貼簿，算盤已歸零清空！");
+            } catch (err) {
+                alert("⚠️ 明細複製完成，算盤已歸零！");
+            }
+
             cart = [];
             render();
         }
@@ -575,6 +618,22 @@
             const container = document.getElementById('cartContainer');
             const totalEl = document.getElementById('grandTotal');
 
+            // 1. 動態更新所有快捷按鈕的高亮狀態 (active)
+            document.querySelectorAll('.btn-item').forEach(btn => {
+                const cIdx = btn.getAttribute('data-cat');
+                const iIdx = btn.getAttribute('data-item');
+                if (cIdx !== null && iIdx !== null && categoriesData[cIdx] && categoriesData[cIdx].items[iIdx]) {
+                    const item = categoriesData[cIdx].items[iIdx];
+                    const isInCart = cart.some(c => c.name === item.name);
+                    if (isInCart) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            // 2. 渲染明細清單與總金額
             if (cart.length === 0) {
                 container.innerHTML = `<div class="cart-empty">尚未選取任何項目</div>`;
                 totalEl.innerText = "NT$ 0";
@@ -610,7 +669,7 @@
             totalEl.innerText = `NT$ ${total.toLocaleString()}`;
         }
 
-        document.getElementById('resetBtn').addEventListener('click', clearCart);
+        document.getElementById('resetBtn').addEventListener('click', copyAndClearCart);
 
         initCategoryButtons();
     </script>
