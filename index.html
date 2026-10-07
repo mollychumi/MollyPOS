@@ -576,44 +576,44 @@
             render();
         }
 
-        async function copyAndClearCart() {
-            if (cart.length === 0) {
-                alert("目前算盤內沒有任何項目喔！");
-                return;
-            }
+async function copyAndClearCart() {
+    if (cart.length === 0) {
+        alert("目前算盤內沒有任何項目喔！");
+        return;
+    }
 
-            let textLines = [];
-            let total = 0;
+    let textLines = [];
+    let total = 0;
 
-            cart.forEach(item => {
-                const subtotal = item.price * item.qty;
-                total += subtotal;
-                textLines.push(`${item.name}\n$${item.price} × ${item.qty} = $${subtotal}`);
-            });
+    cart.forEach(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        // 避開成對出現的 $ 符號，改用「元」標示
+        textLines.push(`${item.name}\n${item.price.toLocaleString()}元 × ${item.qty} = ${subtotal.toLocaleString()}元`);
+    });
 
-            textLines.push(`\n💰 總金額：NT$ ${total.toLocaleString()}`);
-            const finalText = textLines.join('\n');
+    textLines.push(`\n💰 總金額：NT$ ${total.toLocaleString()}`);
+    const finalText = textLines.join('\n');
 
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(finalText);
-                } else {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = finalText;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                }
-                alert("✅ 明細已複製至剪貼簿，算盤已歸零清空！");
-            } catch (err) {
-                alert("⚠️ 明細複製完成，算盤已歸零！");
-            }
-
-            cart = [];
-            render();
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(finalText);
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = finalText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
         }
+        alert("✅ 明細已複製至剪貼簿，算盤已歸零清空！");
+    } catch (err) {
+        alert("⚠️ 明細複製完成，算盤已歸零！");
+    }
 
+    cart = [];
+    render();
+}
         function render() {
             const container = document.getElementById('cartContainer');
             const totalEl = document.getElementById('grandTotal');
